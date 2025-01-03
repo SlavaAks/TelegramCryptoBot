@@ -1,3 +1,4 @@
+import datetime
 import os
 from pathlib import Path
 
@@ -6,6 +7,7 @@ import csv
 
 import ccxt
 
+import pandas as pd
 # -----------------------------------------------------------------------------
 
 root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(''))))
@@ -71,9 +73,14 @@ def scrape_candles_to_csv(filename, exchange_id, max_retries, symbol, timeframe,
     # fetch all candles
     ohlcv = scrape_ohlcv(exchange, max_retries, symbol, timeframe, since, limit)
     # save them to csv file
-    write_to_csv(filename, exchange, ohlcv)
+    df = pd.DataFrame(ohlcv)
+    p = Path("./data/raw/", str(exchange))
+    p.mkdir(parents=True, exist_ok=True)
+    full_path = p / str(filename)
+    df.to_csv(full_path)
     print('Saved', len(ohlcv), 'candles from', exchange.iso8601(ohlcv[0][0]), 'to', exchange.iso8601(ohlcv[-1][0]),
           'to', filename)
 
 
-#scrape_candles_to_csv('btc_usdt_15m.csv', 'binance', 3, 'BTC/USDT', '15m', '2024-01-0100:00:00Z', 1000)
+if __name__ == '__main__':
+    scrape_candles_to_csv(f'btc_usdt_15m.csv', 'bybit', 3, 'BTC/USDT', '15m', '2024-01-0100:00:00Z', 1000)

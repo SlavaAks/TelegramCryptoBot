@@ -15,7 +15,7 @@ def all_crypto_news():
 
     news_list = []
     for i in j_responce["results"]:
-        news_list.insert(0, i["created_at"] + '\n' + i["title"] + '\n' + i["url"] + '\n')
+        news_list.insert(0, (i["id"], i["created_at"], i["title"], i["url"]))
     return news_list
 
 
